@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Srinivas Kota — Senior UI Engineer & UX Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+<style>
+  /* ── TOKENS ───────────────────────────────────────────────── */
+  :root {
+    --bg:        #F6F3ED;
+    --ink:       #12100E;
+    --sub:       #3A3632;
+    --accent:    #BD4516;
+    --accent2:   #1855A8;
+    --rule:      rgba(18,16,14,.16);
+    --card:      #ECEAE3;
+    --radius:    6px;
+    --serif:     'DM Serif Display', Georgia, serif;
+    --sans:      'DM Sans', system-ui, sans-serif;
+    --ease:      cubic-bezier(.25,.46,.45,.94);
+  }
+
+  /* ── RESET ────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+
+  /* ── CUSTOM CURSOR ────────────────────────────────────────── */
+  .cursor-dot, .cursor-ring {
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: opacity .3s;
+  }
+  .cursor-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--accent);
+    border-radius: 50%;
+    transition: transform .12s var(--ease), width .2s, height .2s;
+  }
+  body:has(a:hover) .cursor-ring,
+  body:has(button:hover) .cursor-ring {
+    width: 56px; height: 56px;
+  }
+
+  /* ── NAV ──────────────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 5%;
+    background: transparent;
+    transition: background .4s, padding .4s;
+  }
+  nav.scrolled {
+    background: rgba(246,243,237,.96);
+    backdrop-filter: blur(12px);
+    padding: 1rem 5%;
+    border-bottom: 1px solid var(--rule);
+  }
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    letter-spacing: -.01em;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2.5rem; }
+  .nav-links a {
+    font-size: .82rem; font-weight: 500;
+    letter-spacing: .08em; text-transform: uppercase;
+    color: var(--sub);
+    position: relative; padding-bottom: 2px;
+    transition: color .2s;
+  }
+  .nav-links a::after {
+    content:''; position: absolute; bottom:0; left:0;
+    width:0; height:1px; background: var(--accent);
+    transition: width .25s var(--ease);
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* hamburger */
+  .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .burger span { display: block; width: 24px; height: 1.5px; background: var(--ink); transition: .3s; }
+
+  /* ── HERO ─────────────────────────────────────────────────── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 5%;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding-top: 6rem;
+    z-index: 2;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font-size: .75rem; font-weight: 500; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+  .hero-tag::before {
+    content:''; width: 24px; height: 1px; background: var(--accent);
+  }
+  .hero-name {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 6vw, 5.5rem);
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    margin-bottom: 1.5rem;
+  }
+  .hero-name em {
+    font-style: italic; color: var(--accent);
+    display: block;
+  }
+  .hero-desc {
+    font-size: 1.05rem; color: var(--sub);
+    max-width: 440px; line-height: 1.75;
+    margin-bottom: 2.5rem;
+  }
+  .hero-cta {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .85rem 1.8rem;
+    font-family: var(--sans); font-size: .85rem;
+    font-weight: 500; letter-spacing: .04em;
+    border-radius: var(--radius);
+    transition: all .2s var(--ease);
+    cursor: none;
+  }
+  .btn-primary {
+    background: var(--accent); color: #F6F3ED;
+    border: 1.5px solid var(--accent);
+  }
+  .btn-primary:hover { background: #9e3510; border-color: #9e3510; }
+  .btn-outline {
+    background: transparent; color: var(--ink);
+    border: 1.5px solid var(--rule);
+  }
+  .btn-outline:hover { border-color: var(--ink); }
+
+  .hero-right {
+    display: flex; align-items: center; justify-content: center;
+    position: relative; z-index: 2;
+  }
+  .hero-graphic {
+    width: min(420px, 90%);
+    aspect-ratio: 1;
+    position: relative;
+  }
+  .hero-circle {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--rule);
+    animation: spin 30s linear infinite;
+  }
+  .hero-circle::before {
+    content:''; position: absolute;
+    width: 10px; height: 10px; background: var(--accent);
+    border-radius: 50%; top: -5px; left: 50%; transform: translateX(-50%);
+  }
+  .hero-circle:nth-child(2) {
+    inset: 40px; animation-duration: 20s; animation-direction: reverse;
+    border-color: rgba(201,87,42,.25);
+  }
+  .hero-circle:nth-child(2)::before { background: var(--accent2); }
+  .hero-inner {
+    position: absolute; inset: 80px;
+    background: var(--card);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: .4rem;
+    border: 1px solid var(--rule);
+  }
+  .hero-inner .initials {
+    font-family: var(--serif); font-size: 3.5rem;
+    line-height: 1; color: var(--ink);
+  }
+  .hero-inner .years {
+    font-size: .7rem; text-transform: uppercase;
+    letter-spacing: .15em; color: var(--sub);
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .hero-scroll {
+    position: absolute; bottom: 2.5rem; left: 5%;
+    display: flex; align-items: center; gap: .75rem;
+    font-size: .72rem; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--sub);
+  }
+  .scroll-line {
+    width: 40px; height: 1px; background: var(--sub);
+    animation: scrollLine 2s ease-in-out infinite;
+  }
+  @keyframes scrollLine {
+    0%,100% { width: 40px; } 50% { width: 70px; }
+  }
+
+  /* floating badges */
+  .badge {
+    position: absolute;
+    background: var(--card); border: 1px solid var(--rule);
+    border-radius: 40px;
+    padding: .55rem 1rem;
+    font-size: .72rem; font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,.06);
+  }
+  .badge-1 { top: 18%; left: -10%; animation: float 4s ease-in-out infinite; }
+  .badge-2 { bottom: 20%; right: -8%; animation: float 4s ease-in-out infinite .8s; }
+  .badge-3 { top: 55%; left: -12%; animation: float 4s ease-in-out infinite 1.6s; }
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+  /* ── SECTION SHARED ───────────────────────────────────────── */
+  section { padding: 6rem 5%; }
+  .section-label {
+    display: flex; align-items: center; gap: .75rem;
+    font-size: .72rem; font-weight: 500; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .section-label::after {
+    content:''; flex: 1; max-width: 40px; height: 1px; background: var(--accent);
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.1; letter-spacing: -.02em;
+    margin-bottom: 3rem;
+  }
+  .section-title em { font-style: italic; color: var(--accent); }
+
+  /* ── ABOUT ────────────────────────────────────────────────── */
+  #about { background: var(--ink); color: var(--bg); }
+  #about .section-label { color: var(--accent); }
+  #about .section-label::after { background: var(--accent); }
+  #about .section-title em { color: var(--accent); }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4rem; align-items: start;
+  }
+  .about-text p {
+    font-size: 1.05rem; color: rgba(246,243,237,.88);
+    line-height: 1.8; margin-bottom: 1.25rem;
+  }
+  .about-stats {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1.5rem; padding-top: .5rem;
+  }
+  .stat {
+    border-top: 1px solid rgba(244,241,236,.1);
+    padding-top: 1.25rem;
+  }
+  .stat-num {
+    font-family: var(--serif); font-size: 3.2rem;
+    color: var(--accent); line-height: 1;
+    margin-bottom: .3rem; letter-spacing: -.02em;
+  }
+  .stat-label {
+    font-size: .78rem; text-transform: uppercase;
+    letter-spacing: .08em; color: rgba(246,243,237,.6);
+  }
+
+  /* ── SKILLS ───────────────────────────────────────────────── */
+  .skills-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .skill-card {
+    background: var(--card); border: 1px solid var(--rule);
+    border-radius: 8px; padding: 2rem;
+    transition: transform .25s var(--ease), box-shadow .25s;
+    position: relative; overflow: hidden;
+  }
+  .skill-card::before {
+    content:''; position: absolute; top: 0; left: 0;
+    width: 3px; height: 0; background: var(--accent);
+    transition: height .3s var(--ease);
+  }
+  .skill-card:hover { transform: translateY(-4px); box-shadow: 0 20px 48px rgba(0,0,0,.13); }
+  .skill-card:hover::before { height: 100%; }
+  .skill-card h3 {
+    font-size: .72rem; text-transform: uppercase;
+    letter-spacing: .12em; color: var(--accent);
+    margin-bottom: 1.25rem; font-weight: 500;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .tag {
+    font-size: .75rem; padding: .3rem .75rem;
+    border-radius: 40px; border: 1px solid var(--rule);
+    background: var(--bg); color: var(--sub);
+    transition: all .2s;
+  }
+  .tag:hover { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+  /* ── EXPERIENCE ───────────────────────────────────────────── */
+  #experience { background: var(--card); }
+  .timeline { position: relative; }
+  .timeline::before {
+    content:''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 1px; background: var(--rule);
+  }
+  .timeline-item {
+    padding-left: 2.5rem; padding-bottom: 3rem;
+    position: relative;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-dot {
+    position: absolute; left: -5px; top: 4px;
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--bg); border: 2px solid var(--accent);
+    transition: background .2s;
+  }
+  .timeline-item:hover .timeline-dot { background: var(--accent); }
+  .timeline-period {
+    font-size: .72rem; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--accent);
+    margin-bottom: .4rem; font-weight: 500;
+  }
+  .timeline-role {
+    font-family: var(--serif); font-size: 1.4rem;
+    letter-spacing: -.01em; margin-bottom: .25rem;
+  }
+  .timeline-company {
+    font-size: .85rem; color: var(--sub); margin-bottom: .75rem;
+  }
+  .timeline-desc {
+    font-size: .92rem; color: var(--sub); line-height: 1.7;
+    max-width: 560px;
+  }
+
+  /* ── PROJECTS ─────────────────────────────────────────────── */
+  .projects-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .project-card {
+    background: var(--card); border: 1px solid var(--rule);
+    border-radius: 8px; overflow: hidden;
+    transition: transform .3s var(--ease), box-shadow .3s;
+  }
+  .project-card:hover { transform: translateY(-6px); box-shadow: 0 28px 70px rgba(0,0,0,.15); }
+  .project-thumb {
+    height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-size: 3rem; color: rgba(26,23,20,.08);
+    position: relative; overflow: hidden;
+  }
+  .project-thumb::after {
+    content:''; position: absolute; inset:0;
+    background: linear-gradient(135deg, transparent 40%, rgba(201,87,42,.08));
+    transition: opacity .3s;
+  }
+  .project-card:hover .project-thumb::after { opacity: 2; }
+  .pt-1 { background: #E8E3DA; }
+  .pt-2 { background: #DDE3E8; }
+  .pt-3 { background: #E3E8DD; }
+  .pt-4 { background: #E8DDDE; }
+  .project-body { padding: 1.75rem; }
+  .project-num {
+    font-size: .7rem; text-transform: uppercase;
+    letter-spacing: .15em; color: var(--accent);
+    margin-bottom: .4rem; font-weight: 500;
+  }
+  .project-title {
+    font-family: var(--serif); font-size: 1.25rem;
+    margin-bottom: .5rem; letter-spacing: -.01em;
+  }
+  .project-desc {
+    font-size: .85rem; color: var(--sub);
+    line-height: 1.7; margin-bottom: 1.25rem;
+  }
+  .project-stack { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.25rem; }
+  .project-link {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: .78rem; font-weight: 500; color: var(--accent);
+    text-transform: uppercase; letter-spacing: .06em;
+    transition: gap .2s;
+  }
+  .project-link:hover { gap: .7rem; }
+  .project-impact {
+    margin-top: .6rem; padding: .6rem .9rem;
+    background: rgba(189,69,22,.07); border-left: 3px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+    font-size: .78rem; color: var(--accent); line-height: 1.5;
+  }
+
+  /* ── CONTACT ──────────────────────────────────────────────── */
+  #contact { background: var(--ink); color: var(--bg); text-align: center; }
+  #contact .section-label { justify-content: center; color: var(--accent); }
+  #contact .section-label::after { display: none; }
+  #contact .section-title { margin-bottom: 1rem; }
+  #contact .section-title em { color: var(--accent); }
+  .contact-sub {
+    font-size: 1rem; color: rgba(246,243,237,.75);
+    margin-bottom: 3rem; line-height: 1.7;
+  }
+  .contact-links {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 4rem;
+  }
+  .contact-link {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .85rem 1.8rem;
+    border: 1px solid rgba(246,243,237,.22);
+    border-radius: var(--radius); font-size: .85rem;
+    font-weight: 500; color: rgba(246,243,237,.88);
+    transition: all .2s var(--ease);
+  }
+  .contact-link:hover {
+    border-color: var(--accent); color: var(--bg);
+    background: var(--accent);
+  }
+  footer {
+    border-top: 1px solid rgba(244,241,236,.08);
+    padding: 1.5rem 5%;
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--ink);
+    flex-wrap: wrap; gap: 1rem;
+  }
+  footer p { font-size: .78rem; color: rgba(246,243,237,.5); }
+
+  /* ── SCROLL REVEAL ────────────────────────────────────────── */
+  .reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity .7s var(--ease), transform .7s var(--ease);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: .1s; }
+  .reveal-delay-2 { transition-delay: .2s; }
+  .reveal-delay-3 { transition-delay: .3s; }
+  .reveal-delay-4 { transition-delay: .4s; }
+
+  /* ── HERO ANIM ────────────────────────────────────────────── */
+  .hero-tag   { opacity:0; transform: translateX(-20px); animation: slideIn .7s .3s var(--ease) forwards; }
+  .hero-name  { opacity:0; transform: translateY(30px);  animation: slideIn .8s .5s var(--ease) forwards; }
+  .hero-desc  { opacity:0; transform: translateY(20px);  animation: slideIn .7s .7s var(--ease) forwards; }
+  .hero-cta   { opacity:0; transform: translateY(20px);  animation: slideIn .7s .9s var(--ease) forwards; }
+  .hero-right { opacity:0;                                animation: fadeIn  .9s 1.1s ease forwards; }
+  @keyframes slideIn { to { opacity:1; transform: none; } }
+  @keyframes fadeIn  { to { opacity:1; } }
+
+  /* ── RESPONSIVE ───────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    #hero { grid-template-columns: 1fr; min-height: auto; padding-top: 5rem; }
+    .hero-right { display: none; }
+    .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+    .nav-links { display: none; }
+    .nav-links.open {
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--bg); z-index: 99;
+      align-items: center; justify-content: center;
+      gap: 2.5rem;
+    }
+    .nav-links.open a { font-size: 1.2rem; }
+    .burger { display: flex; z-index: 101; }
+    .burger.active span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .burger.active span:nth-child(2) { opacity: 0; }
+    .burger.active span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  }
+  @media (max-width: 600px) {
+    section { padding: 4rem 6%; }
+    .about-stats { grid-template-columns: 1fr 1fr; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .contact-links { flex-direction: column; align-items: center; }
+  }
+  @media (hover: none) { body { cursor: auto; } .cursor-dot, .cursor-ring { display: none; } }
+
+  /* ── UX PROJECT CARDS ─────────────────────────────────────── */
+  .ux-projects { display: flex; flex-direction: column; gap: 2.5rem; }
+
+  .ux-card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: box-shadow .3s;
+  }
+  .ux-card:hover { box-shadow: 0 24px 64px rgba(0,0,0,.13); }
+
+  .ux-header {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 1rem;
+    padding: 1.75rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--rule);
+    flex-wrap: wrap;
+  }
+  .ux-num { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); margin-bottom: .3rem; font-weight: 500; }
+  .ux-title { font-family: var(--serif); font-size: 1.8rem; letter-spacing: -.02em; margin-bottom: .3rem; }
+  .ux-client { font-size: .85rem; color: var(--sub); margin-bottom: .75rem; }
+  .ux-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .ux-visit {
+    font-size: .78rem; font-weight: 500; color: var(--accent);
+    text-transform: uppercase; letter-spacing: .06em;
+    border: 1px solid rgba(201,87,42,.3);
+    padding: .5rem 1rem; border-radius: var(--radius);
+    white-space: nowrap; transition: all .2s;
+    align-self: flex-start;
+  }
+  .ux-visit:hover { background: var(--accent); color: var(--bg); }
+
+  .ux-metrics {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-bottom: 1px solid var(--rule);
+  }
+  .ux-metric {
+    padding: 1.25rem 1.5rem;
+    border-right: 1px solid var(--rule);
+  }
+  .ux-metric:last-child { border-right: none; }
+  .ux-metric-num { font-family: var(--serif); font-size: 2.1rem; color: var(--accent); line-height: 1; margin-bottom: .3rem; font-weight: 600; }
+  .ux-metric-label { font-size: .7rem; color: var(--sub); line-height: 1.4; text-transform: uppercase; letter-spacing: .07em; font-weight: 500; }
+
+  .ux-body { padding: 1.75rem 2rem 2rem; }
+  .ux-section-label {
+    font-size: .68rem; text-transform: uppercase; letter-spacing: .12em;
+    color: var(--sub); font-weight: 500; margin-bottom: .75rem;
+  }
+
+  .par-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; }
+  .par-block { padding: 1rem 1.1rem; border-radius: 6px; }
+  .par-problem { background: rgba(189,69,22,.07); border-left: 3px solid rgba(189,69,22,.7); border-radius: 0 6px 6px 0; }
+  .par-action  { background: rgba(24,85,168,.07); border-left: 3px solid rgba(24,85,168,.7); border-radius: 0 6px 6px 0; }
+  .par-result  { background: rgba(28,130,28,.07);  border-left: 3px solid rgba(28,130,28,.7);  border-radius: 0 6px 6px 0; }
+  .par-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 500; margin-bottom: .5rem; }
+  .par-problem .par-label { color: #a83010; }
+  .par-action  .par-label { color: var(--accent2); }
+  .par-result  .par-label { color: #176a1c; }
+  .par-text { font-size: .85rem; line-height: 1.65; color: var(--sub); }
+
+  .process-row {
+    display: flex; align-items: center; flex-wrap: wrap; gap: .4rem;
+  }
+  .proc-step {
+    font-size: .75rem; font-weight: 500;
+    padding: .45rem .9rem;
+    background: var(--bg); border: 1px solid var(--rule);
+    border-radius: 20px; color: var(--ink);
+    white-space: nowrap;
+  }
+  .proc-arrow { color: var(--accent); font-size: .85rem; opacity: .6; }
+
+  .ba-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+  .ba-block { padding: 1rem 1.1rem; border-radius: 6px; border: 1px solid var(--rule); }
+  .ba-before { background: var(--bg); }
+  .ba-after  { background: rgba(28,130,28,.07); border-color: rgba(28,130,28,.3); }
+  .ba-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 500; margin-bottom: .6rem; }
+  .ba-before .ba-label { color: #a83010; }
+  .ba-after  .ba-label { color: #176a1c; }
+  .ba-item {
+    font-size: .83rem; color: var(--sub);
+    padding: .25rem 0 .25rem 1rem;
+    position: relative; line-height: 1.5;
+  }
+  .ba-item::before {
+    content: ''; position: absolute; left: 0; top: .55rem;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--rule);
+  }
+  .ba-after .ba-item::before { background: rgba(34,139,34,.4); }
+
+  @media (max-width: 700px) {
+    .par-row { grid-template-columns: 1fr; }
+    .ba-row  { grid-template-columns: 1fr; }
+    .ux-metrics { grid-template-columns: 1fr; }
+    .ux-metric { border-right: none; border-bottom: 1px solid rgba(191,69,22,.15); }
+    .ux-metric:last-child { border-bottom: none; }
+    .ux-header, .ux-body { padding: 1.25rem; }
+    .ux-title { font-size: 1.4rem; }
+  }
+
+  /* ── ENHANCED UX VISUAL QUALITY ─────────────────────────── */
+
+  /* Crisper section labels */
+  .section-label { font-weight: 600; letter-spacing: .14em; }
+
+  /* Nav links sharper weight */
+  .nav-links a { font-weight: 600; letter-spacing: .09em; }
+
+  /* Stronger timeline hierarchy */
+  .timeline-role { font-weight: 700; letter-spacing: -.015em; }
+  .timeline-company { color: var(--accent); font-weight: 500; font-size: .88rem; }
+  .timeline-desc { font-size: .93rem; line-height: 1.72; }
+
+  /* Skill card sharper */
+  .skill-card h3 { font-weight: 700; font-size: .69rem; letter-spacing: .14em; }
+
+  /* Tags — stronger */
+  .tag { font-weight: 500; color: var(--ink); border-color: rgba(18,16,14,.18); font-size: .76rem; }
+  .tag:hover { background: var(--accent); color: #F6F3ED; border-color: var(--accent); }
+
+  /* UX card metrics bar — warm accent band */
+  .ux-metrics { background: rgba(191,69,22,.07); }
+  .ux-metric { border-right-color: rgba(191,69,22,.15); }
+  .ux-metric-num { color: var(--accent); font-size: 2.1rem; }
+  .ux-metric-label { color: var(--sub); font-weight: 500; }
+
+  /* UX header stronger hierarchy */
+  .ux-num { font-weight: 700; letter-spacing: .13em; }
+  .ux-title { letter-spacing: -.025em; }
+  .ux-client { opacity: .72; font-size: .86rem; }
+  .ux-visit { font-weight: 700; font-size: .76rem; }
+
+  /* PAR blocks — more legible */
+  .par-label { font-weight: 700; letter-spacing: .12em; font-size: .67rem; }
+  .par-text { font-size: .87rem; line-height: 1.68; color: var(--ink); }
+  .par-problem { background: rgba(189,69,22,.07); border-left: 3px solid rgba(189,69,22,.65); }
+  .par-action  { background: rgba(24,85,168,.07);  border-left: 3px solid rgba(24,85,168,.65); }
+  .par-result  { background: rgba(28,130,28,.07);  border-left: 3px solid rgba(28,130,28,.65); }
+
+  /* Process steps crisper */
+  .proc-step { font-weight: 600; font-size: .73rem; background: var(--bg); border-color: rgba(18,16,14,.22); }
+  .proc-arrow { color: var(--accent); opacity: 1; font-weight: 700; }
+
+  /* BA blocks */
+  .ba-label { font-weight: 700; letter-spacing: .12em; }
+  .ba-item { font-size: .84rem; color: var(--ink); line-height: 1.55; }
+  .ba-after { background: rgba(28,130,28,.07); border-color: rgba(28,130,28,.28); }
+  .ba-after .ba-item::before { background: rgba(28,130,28,.55); }
+
+  /* UX section label inside card */
+  .ux-section-label { font-weight: 700; color: var(--ink); opacity: .45; font-size: .67rem; letter-spacing: .14em; }
+
+  /* Project impact block */
+  .project-impact { background: rgba(189,69,22,.07); border-left: 3px solid var(--accent); }
+
+  /* About section brightness */
+  .about-text p { color: rgba(246,243,237,.85); font-size: 1.05rem; }
+  .stat-label { color: rgba(246,243,237,.58); font-weight: 500; letter-spacing: .1em; }
+
+  /* Hero desc */
+  .hero-desc { font-size: 1.08rem; }
+
+  /* Contact sub */
+  .contact-sub { font-size: 1.05rem; }
+
+  /* Contact link hover — fill not just colour */
+  .contact-link:hover { background: rgba(191,69,22,.1); border-color: var(--accent); color: var(--accent); }
+
+  /* Timeline dot crisper */
+  .timeline-dot { width: 13px; height: 13px; left: -6px; border-width: 2.5px; }
+
+  /* Badge more polished */
+  .badge { font-weight: 600; border-radius: 28px; }
+
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor-dot" id="dot"></div>
+<div class="cursor-ring" id="ring"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">SK<span>.</span></div>
+  <div class="nav-links" id="navLinks">
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="burger" id="burger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Available for Opportunities</div>
+    <h1 class="hero-name">
+      Srinivas<br>
+      <em>Kota</em>
+    </h1>
+    <p class="hero-desc">
+      Senior UI Engineer & UX Designer with 8+ years of experience crafting
+      intuitive digital experiences — from wireframe to production-ready code.
+    </p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-primary">View Projects →</a>
+      <a href="mailto:srinivas95kota@hotmail.com" class="btn btn-outline">Get in Touch</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-graphic">
+      <div class="hero-circle"></div>
+      <div class="hero-circle"></div>
+      <div class="hero-inner">
+        <span class="initials">SK</span>
+        <span class="years">8+ Years</span>
+      </div>
+      <div class="badge badge-1">🎨 UI/UX Design</div>
+      <div class="badge badge-2">⚛️ React.js</div>
+      <div class="badge badge-3">📐 Figma</div>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div> Scroll to explore
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label reveal">About me</div>
+  <h2 class="section-title reveal">Designing with <em>purpose,</em><br>building with precision.</h2>
+  <div class="about-grid">
+    <div class="about-text reveal reveal-delay-1">
+      <p>
+        UI/UX professional based in Hyderabad, India, specialising in User-Centered Design and Design Thinking. 
+        I bridge the gap between design and engineering — comfortable in Figma as I am in a React codebase.
+      </p>
+      <p>
+        Experienced in Agile (Scrum) environments with a strong focus on usability, interaction design, 
+        and seamless user journeys. I've modernised legacy systems, built design systems, and 
+        mentored cross-functional teams.
+      </p>
+      <p>
+        Holder of an MCA from Osmania University. Fluent in English, Telugu, and Hindi. 
+        I bring both analytical rigour and creative sensitivity to every project I touch.
+      </p>
+    </div>
+    <div class="about-stats reveal reveal-delay-2">
+      <div class="stat"><div class="stat-num">8+</div><div class="stat-label">Years Experience</div></div>
+      <div class="stat"><div class="stat-num">6+</div><div class="stat-label">Products Shipped</div></div>
+      <div class="stat"><div class="stat-num">30%</div><div class="stat-label">Business Growth Delivered</div></div>
+      <div class="stat"><div class="stat-num">110+</div><div class="stat-label">Max Team Size</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label reveal">Capabilities</div>
+  <h2 class="section-title reveal">Skills &amp; <em>Tools</em></h2>
+  <div class="skills-grid">
+    <div class="skill-card reveal reveal-delay-1">
+      <h3>UI/UX Design</h3>
+      <div class="skill-tags">
+        <span class="tag">Figma</span><span class="tag">Wireframing</span>
+        <span class="tag">Prototyping</span><span class="tag">User Flows</span>
+        <span class="tag">Design Thinking</span><span class="tag">UCD</span>
+        <span class="tag">WCAG</span>
+      </div>
+    </div>
+    <div class="skill-card reveal reveal-delay-2">
+      <h3>Frontend Development</h3>
+      <div class="skill-tags">
+        <span class="tag">React.js</span><span class="tag">JavaScript ES6+</span>
+        <span class="tag">HTML5</span><span class="tag">CSS3 / SCSS</span>
+        <span class="tag">Tailwind CSS</span><span class="tag">Material UI</span>
+        <span class="tag">Bootstrap</span>
+      </div>
+    </div>
+    <div class="skill-card reveal reveal-delay-3">
+      <h3>Architecture & Patterns</h3>
+      <div class="skill-tags">
+        <span class="tag">Component Architecture</span><span class="tag">BEM</span>
+        <span class="tag">Responsive Design</span><span class="tag">Mobile-First</span>
+        <span class="tag">Performance Optimisation</span><span class="tag">Core Web Vitals</span>
+      </div>
+    </div>
+    <div class="skill-card reveal reveal-delay-4">
+      <h3>Tools & Platforms</h3>
+      <div class="skill-tags">
+        <span class="tag">GitHub</span><span class="tag">VS Code</span>
+        <span class="tag">Chrome DevTools</span><span class="tag">Photoshop</span>
+        <span class="tag">ChatGPT / Copilot</span><span class="tag">Figma Make</span>
+        <span class="tag">Angular</span><span class="tag">WordPress</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label reveal">Career</div>
+  <h2 class="section-title reveal">Work <em>Experience</em></h2>
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">Jul 2024 – Jan 2025</div>
+      <div class="timeline-role">Senior UI Developer</div>
+      <div class="timeline-company">Cybersoft Technologies, Hyderabad</div>
+      <p class="timeline-desc">Led UI development initiatives with a focus on modern interface delivery, component architecture, and cross-team design collaboration.</p>
+    </div>
+    <div class="timeline-item reveal reveal-delay-1">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">May 2021 – Dec 2023</div>
+      <div class="timeline-role">Technical Architect (UI)</div>
+      <div class="timeline-company">NTT Data (Mouritech), Hyderabad</div>
+      <p class="timeline-desc">Served as Technical Architect driving UX strategy, design systems, and frontend architecture across enterprise-scale projects including Adi Global and District Varanasi portal.</p>
+    </div>
+    <div class="timeline-item reveal reveal-delay-2">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">Nov 2019 – Jun 2020</div>
+      <div class="timeline-role">Senior UI Developer</div>
+      <div class="timeline-company">Medleymed Healthcare, Hyderabad</div>
+      <p class="timeline-desc">Delivered healthcare-focused UI/UX improvements with emphasis on accessibility and workflow efficiency.</p>
+    </div>
+    <div class="timeline-item reveal reveal-delay-3">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">Nov 2018 – Nov 2019</div>
+      <div class="timeline-role">UI Developer</div>
+      <div class="timeline-company">Cyinet, Hyderabad</div>
+      <p class="timeline-desc">Built and maintained responsive UI components, contributing to multiple product feature releases in Agile cycles.</p>
+    </div>
+    <div class="timeline-item reveal reveal-delay-4">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">Aug 2016 – Oct 2018</div>
+      <div class="timeline-role">Web Designer</div>
+      <div class="timeline-company">Adroit Neo Tech Solutions</div>
+      <p class="timeline-desc">Designed and implemented web interfaces for client projects, honing skills in layout design, typography, and cross-browser compatibility.</p>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-period">Jan 2015 – Jul 2016</div>
+      <div class="timeline-role">Web Designer</div>
+      <div class="timeline-company">Anna IT Services</div>
+      <p class="timeline-desc">Entry-level role focused on front-end web design, client communication, and iterative design delivery.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label reveal">Work</div>
+  <h2 class="section-title reveal">Featured <em>Projects</em></h2>
+  <div class="ux-projects">
+
+    <!-- PROJECT 1 -->
+    <div class="ux-card reveal">
+      <div class="ux-header">
+        <div class="ux-header-left">
+          <div class="ux-num">01 — ERP Modernisation</div>
+          <div class="ux-title">PrimeroEdge</div>
+          <div class="ux-client">School nutrition management ERP &middot; Team of 21+ &middot; Sole UI/UX</div>
+          <div class="ux-tags">
+            <span class="tag">VB .NET</span><span class="tag">HTML5</span><span class="tag">CSS3</span><span class="tag">JavaScript</span><span class="tag">jQuery</span><span class="tag">WCAG</span>
+          </div>
+        </div>
+        <a href="https://qa.primeroedge.co/" target="_blank" rel="noopener" class="ux-visit">Visit Site ↗</a>
+      </div>
+
+      <div class="ux-metrics">
+        <div class="ux-metric"><div class="ux-metric-num">~30%</div><div class="ux-metric-label">Business growth from UX uplift</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">20 yrs</div><div class="ux-metric-label">Legacy system modernised</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">100+</div><div class="ux-metric-label">Screens redesigned end-to-end</div></div>
+      </div>
+
+      <div class="ux-body">
+        <div class="ux-section-label">Problem → Action → Result</div>
+        <div class="par-row">
+          <div class="par-block par-problem">
+            <div class="par-label">Problem</div>
+            <div class="par-text">20-year-old VB .NET app with cluttered screens, inconsistent design, poor usability, and zero responsiveness.</div>
+          </div>
+          <div class="par-block par-action">
+            <div class="par-label">Action</div>
+            <div class="par-text">Led full end-to-end redesign as sole UI developer. Applied WCAG standards, visual hierarchy, and responsive layouts — zero backend disruption.</div>
+          </div>
+          <div class="par-block par-result">
+            <div class="par-label">Result</div>
+            <div class="par-text">Modern intuitive interface driving ~30% business growth. Reduced UI complexity, improved adoption and workflow speed.</div>
+          </div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">UX Process</div>
+        <div class="process-row">
+          <div class="proc-step">Audit</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Wireframe</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Visual Design</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Accessibility</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Dev &amp; QA</div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">Before &amp; After</div>
+        <div class="ba-row">
+          <div class="ba-block ba-before">
+            <div class="ba-label">Before</div>
+            <div class="ba-item">Cluttered, dense legacy screens</div>
+            <div class="ba-item">Inconsistent typography &amp; spacing</div>
+            <div class="ba-item">No responsive or mobile support</div>
+            <div class="ba-item">Accessibility non-compliant</div>
+          </div>
+          <div class="ba-block ba-after">
+            <div class="ba-label">After</div>
+            <div class="ba-item">Clean layouts with clear visual hierarchy</div>
+            <div class="ba-item">Consistent design system across all screens</div>
+            <div class="ba-item">Fully responsive, mobile-first</div>
+            <div class="ba-item">WCAG compliant &amp; accessible</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 2 -->
+    <div class="ux-card reveal reveal-delay-1">
+      <div class="ux-header">
+        <div class="ux-header-left">
+          <div class="ux-num">02 — B2B Enterprise Platform</div>
+          <div class="ux-title">Adi Global Wholesale</div>
+          <div class="ux-client">Global B2B distribution platform &middot; Team of 110+ &middot; Agile/Scrum</div>
+          <div class="ux-tags">
+            <span class="tag">React.js</span><span class="tag">.NET MVC</span><span class="tag">Foundation CSS</span><span class="tag">JavaScript</span><span class="tag">Jira</span>
+          </div>
+        </div>
+        <a href="https://www.adiglobal.com/" target="_blank" rel="noopener" class="ux-visit">Visit Site ↗</a>
+      </div>
+
+      <div class="ux-metrics">
+        <div class="ux-metric"><div class="ux-metric-num">110+</div><div class="ux-metric-label">Cross-functional team size</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Pixel</div><div class="ux-metric-label">Perfect prototype-to-dev accuracy</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Faster</div><div class="ux-metric-label">Release cycles &amp; fewer defects</div></div>
+      </div>
+
+      <div class="ux-body">
+        <div class="ux-section-label">Problem → Action → Result</div>
+        <div class="par-row">
+          <div class="par-block par-problem">
+            <div class="par-label">Problem</div>
+            <div class="par-text">Enterprise B2B platform needed consistent UI from prototypes. Design accuracy, production bugs, and cross-team sync were key challenges.</div>
+          </div>
+          <div class="par-block par-action">
+            <div class="par-label">Action</div>
+            <div class="par-text">Implemented pixel-perfect responsive screens from approved prototypes. Handled rapid UI fixes in production, delivered Jira tasks in sprint cycles.</div>
+          </div>
+          <div class="par-block par-result">
+            <div class="par-label">Result</div>
+            <div class="par-text">Reduced production UI defects, saved significant business hours, and strengthened enterprise-level Agile delivery practices.</div>
+          </div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">UX Process</div>
+        <div class="process-row">
+          <div class="proc-step">Prototype Review</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Responsive Build</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Sprint Delivery</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Production Fixes</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Client Sync</div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">Before &amp; After</div>
+        <div class="ba-row">
+          <div class="ba-block ba-before">
+            <div class="ba-label">Before</div>
+            <div class="ba-item">Design-to-dev gaps causing inconsistency</div>
+            <div class="ba-item">High UI defect rate in production</div>
+            <div class="ba-item">Slow cross-team communication</div>
+          </div>
+          <div class="ba-block ba-after">
+            <div class="ba-label">After</div>
+            <div class="ba-item">Pixel-perfect implementation from prototypes</div>
+            <div class="ba-item">Significantly reduced production defects</div>
+            <div class="ba-item">Streamlined Agile collaboration at scale</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 3 -->
+    <div class="ux-card reveal reveal-delay-2">
+      <div class="ux-header">
+        <div class="ux-header-left">
+          <div class="ux-num">03 — Government Portal</div>
+          <div class="ux-title">District Varanasi, Govt. of UP</div>
+          <div class="ux-client">Citizen services web portal &middot; Team of 35+ &middot; Multi-department</div>
+          <div class="ux-tags">
+            <span class="tag">WordPress</span><span class="tag">PHP</span><span class="tag">.NET</span><span class="tag">HTML5</span><span class="tag">jQuery</span><span class="tag">Ajax</span>
+          </div>
+        </div>
+        <a href="https://varanasi.nic.in" target="_blank" rel="noopener" class="ux-visit">Visit Site ↗</a>
+      </div>
+
+      <div class="ux-metrics">
+        <div class="ux-metric"><div class="ux-metric-num">35+</div><div class="ux-metric-label">Cross-dept stakeholders managed</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">2 Groups</div><div class="ux-metric-label">Govt. office inputs consolidated</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">On Time</div><div class="ux-metric-label">Delivery despite multi-agency scope</div></div>
+      </div>
+
+      <div class="ux-body">
+        <div class="ux-section-label">Problem → Action → Result</div>
+        <div class="par-row">
+          <div class="par-block par-problem">
+            <div class="par-label">Problem</div>
+            <div class="par-text">Government portal needed structured, usable design with complex inputs from multiple departments — challenging to consolidate and keep consistent.</div>
+          </div>
+          <div class="par-block par-action">
+            <div class="par-label">Action</div>
+            <div class="par-text">Gathered requirements from Group 1 &amp; 2 offices, designed responsive accessible WordPress UI aligned with official standards and coordinated delivery.</div>
+          </div>
+          <div class="par-block par-result">
+            <div class="par-label">Result</div>
+            <div class="par-text">Delivered user-friendly citizen portal on time. Improved information accessibility and cross-department coordination statewide.</div>
+          </div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">UX Process</div>
+        <div class="process-row">
+          <div class="proc-step">Stakeholder Research</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">IA &amp; Sitemap</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">UI Design</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Accessibility</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">CMS Build</div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">Before &amp; After</div>
+        <div class="ba-row">
+          <div class="ba-block ba-before">
+            <div class="ba-label">Before</div>
+            <div class="ba-item">Disjointed department requirements</div>
+            <div class="ba-item">No clear information architecture</div>
+            <div class="ba-item">Low citizen usability</div>
+          </div>
+          <div class="ba-block ba-after">
+            <div class="ba-label">After</div>
+            <div class="ba-item">Unified, structured portal experience</div>
+            <div class="ba-item">Clear IA and navigation flow</div>
+            <div class="ba-item">Accessible, responsive for all citizens</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 4 -->
+    <div class="ux-card reveal reveal-delay-3">
+      <div class="ux-header">
+        <div class="ux-header-left">
+          <div class="ux-num">04 — B2C Travel Platform</div>
+          <div class="ux-title">On the Beach</div>
+          <div class="ux-client">UK travel booking platform &middot; Team of 60+ &middot; UX flow design</div>
+          <div class="ux-tags">
+            <span class="tag">Backbone.js</span><span class="tag">MongoDB</span><span class="tag">HTML5</span><span class="tag">CSS3</span><span class="tag">jQuery</span><span class="tag">Ajax</span>
+          </div>
+        </div>
+        <a href="https://www.onthebeach.co.uk" target="_blank" rel="noopener" class="ux-visit">Visit Site ↗</a>
+      </div>
+
+      <div class="ux-metrics">
+        <div class="ux-metric"><div class="ux-metric-num">60+</div><div class="ux-metric-label">Team size across functions</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Cleaner</div><div class="ux-metric-label">Booking journey UX flows</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Consistent</div><div class="ux-metric-label">UI across all booking steps</div></div>
+      </div>
+
+      <div class="ux-body">
+        <div class="ux-section-label">Problem → Action → Result</div>
+        <div class="par-row">
+          <div class="par-block par-problem">
+            <div class="par-label">Problem</div>
+            <div class="par-text">Complex travel booking flows needed intuitive, consistent UI. Translating multi-step journeys from design to dev while maintaining smoothness was difficult.</div>
+          </div>
+          <div class="par-block par-action">
+            <div class="par-label">Action</div>
+            <div class="par-text">Built pixel-perfect responsive UI components from mockups. Created user flows, process flows, and site maps. Aligned design and dev teams throughout.</div>
+          </div>
+          <div class="par-block par-result">
+            <div class="par-label">Result</div>
+            <div class="par-text">Improved user journey clarity across the booking funnel. Consistent, scalable UI across all steps with smooth cross-team delivery.</div>
+          </div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">UX Process</div>
+        <div class="process-row">
+          <div class="proc-step">User Research</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">User Flows</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">UI Components</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Responsive Build</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Design QA</div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">Before &amp; After</div>
+        <div class="ba-row">
+          <div class="ba-block ba-before">
+            <div class="ba-label">Before</div>
+            <div class="ba-item">Complex, confusing booking journeys</div>
+            <div class="ba-item">Inconsistent UI across booking steps</div>
+            <div class="ba-item">Design-dev alignment gaps</div>
+          </div>
+          <div class="ba-block ba-after">
+            <div class="ba-label">After</div>
+            <div class="ba-item">Intuitive, guided booking flow</div>
+            <div class="ba-item">Consistent components throughout</div>
+            <div class="ba-item">Seamless design-dev handoff</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- PROJECT 5 — Edatanow ERP -->
+    <div class="ux-card reveal reveal-delay-4">
+      <div class="ux-header">
+        <div class="ux-header-left">
+          <div class="ux-num">05 — AI-Assisted ERP Design</div>
+          <div class="ux-title">Edatanow</div>
+          <div class="ux-client">ERP platform for business operations &middot; Team of 3+ &middot; UI/UX Developer</div>
+          <div class="ux-tags">
+            <span class="tag">Vue.js 2</span><span class="tag">Figma</span><span class="tag">Replit</span><span class="tag">Manus</span><span class="tag">Figma Make</span><span class="tag">DesignAI</span><span class="tag">Copilot</span>
+          </div>
+        </div>
+        <a href="https://service-uat.edatanow.com/" target="_blank" rel="noopener" class="ux-visit">Visit Site ↗</a>
+      </div>
+
+      <div class="ux-metrics">
+        <div class="ux-metric"><div class="ux-metric-num">AI-First</div><div class="ux-metric-label">Design-to-dev with AI toolchain</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Faster</div><div class="ux-metric-label">Accelerated design-to-dev cycles</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Lower</div><div class="ux-metric-label">Project costs via AI optimisation</div></div>
+      </div>
+
+      <div class="ux-body">
+        <div class="ux-section-label">Problem → Action → Result</div>
+        <div class="par-row">
+          <div class="par-block par-problem">
+            <div class="par-label">Problem</div>
+            <div class="par-text">Complex ERP workflows required faster UI delivery. Manual design-to-dev processes were slow, misaligned, and costly for a small team.</div>
+          </div>
+          <div class="par-block par-action">
+            <div class="par-label">Action</div>
+            <div class="par-text">Designed UX flows in Figma using DesignAI, implemented UI with Replit and Manus, and resolved dev issues via Copilot in VS Code — end-to-end AI-assisted workflow.</div>
+          </div>
+          <div class="par-block par-result">
+            <div class="par-label">Result</div>
+            <div class="par-text">Accelerated design-to-dev cycles, improved UI consistency, optimised team productivity, and reduced project delivery costs significantly.</div>
+          </div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">UX Process</div>
+        <div class="process-row">
+          <div class="proc-step">Requirement Analysis</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">AI UX Design</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Figma Prototype</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">AI-Assisted Dev</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Copilot QA</div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">Before &amp; After</div>
+        <div class="ba-row">
+          <div class="ba-block ba-before">
+            <div class="ba-label">Before</div>
+            <div class="ba-item">Manual design processes slowing delivery</div>
+            <div class="ba-item">Misalignment between design and dev</div>
+            <div class="ba-item">High iteration cost on a small team</div>
+          </div>
+          <div class="ba-block ba-after">
+            <div class="ba-label">After</div>
+            <div class="ba-item">AI-assisted design &amp; dev pipeline</div>
+            <div class="ba-item">Consistent UI with fast iteration cycles</div>
+            <div class="ba-item">Reduced costs, higher output quality</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 6 — Medley Medical -->
+    <div class="ux-card reveal">
+      <div class="ux-header">
+        <div class="ux-header-left">
+          <div class="ux-num">06 — Healthcare E-Commerce</div>
+          <div class="ux-title">Medley Medical Solutions</div>
+          <div class="ux-client">Healthcare platform &middot; Team of 10+ &middot; UI Developer</div>
+          <div class="ux-tags">
+            <span class="tag">Magento</span><span class="tag">PHP</span><span class="tag">HTML5</span><span class="tag">CSS3</span><span class="tag">JavaScript</span><span class="tag">jQuery</span><span class="tag">Ajax</span>
+          </div>
+        </div>
+        <a href="https://medleymed.com" target="_blank" rel="noopener" class="ux-visit">Visit Site ↗</a>
+      </div>
+
+      <div class="ux-metrics">
+        <div class="ux-metric"><div class="ux-metric-num">Faster</div><div class="ux-metric-label">Page load times post-optimisation</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Cross</div><div class="ux-metric-label">Browser &amp; device compatibility fixed</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Smoother</div><div class="ux-metric-label">Frontend user interactions</div></div>
+      </div>
+
+      <div class="ux-body">
+        <div class="ux-section-label">Problem → Action → Result</div>
+        <div class="par-row">
+          <div class="par-block par-problem">
+            <div class="par-label">Problem</div>
+            <div class="par-text">Website suffered from performance bottlenecks, cross-browser inconsistencies, and inefficient frontend practices impacting load times and usability.</div>
+          </div>
+          <div class="par-block par-action">
+            <div class="par-label">Action</div>
+            <div class="par-text">Implemented page-optimisation techniques, enforced JavaScript best practices for code efficiency, and resolved cross-browser compatibility issues across devices.</div>
+          </div>
+          <div class="par-block par-result">
+            <div class="par-label">Result</div>
+            <div class="par-text">Improved website performance and responsiveness with consistent cross-browser UX, reduced UI issues, and enhanced overall frontend efficiency.</div>
+          </div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">UX Process</div>
+        <div class="process-row">
+          <div class="proc-step">Performance Audit</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">JS Refactor</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Cross-Browser QA</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Load Optimisation</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">UAT Sign-off</div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">Before &amp; After</div>
+        <div class="ba-row">
+          <div class="ba-block ba-before">
+            <div class="ba-label">Before</div>
+            <div class="ba-item">Slow page load times on all devices</div>
+            <div class="ba-item">Inconsistent UI across browsers</div>
+            <div class="ba-item">Inefficient, unoptimised JS code</div>
+          </div>
+          <div class="ba-block ba-after">
+            <div class="ba-label">After</div>
+            <div class="ba-item">Noticeably faster, optimised performance</div>
+            <div class="ba-item">Consistent experience across all browsers</div>
+            <div class="ba-item">Clean, maintainable frontend codebase</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 7 — Global Directive -->
+    <div class="ux-card reveal reveal-delay-1">
+      <div class="ux-header">
+        <div class="ux-header-left">
+          <div class="ux-num">07 — Marketing Campaign Platform</div>
+          <div class="ux-title">Global Directive</div>
+          <div class="ux-client">Digital marketing platform &middot; Team of 20+ &middot; UI Developer &amp; Layout Designer</div>
+          <div class="ux-tags">
+            <span class="tag">.NET</span><span class="tag">MySQL</span><span class="tag">Ajax</span><span class="tag">HTML5</span><span class="tag">CSS3</span><span class="tag">JavaScript</span><span class="tag">Photoshop CS6</span>
+          </div>
+        </div>
+        <a href="https://www.directivegroup.com" target="_blank" rel="noopener" class="ux-visit">Visit Site ↗</a>
+      </div>
+
+      <div class="ux-metrics">
+        <div class="ux-metric"><div class="ux-metric-num">Multi</div><div class="ux-metric-label">Campaign templates delivered</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Brand</div><div class="ux-metric-label">Consistent across all campaigns</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Faster</div><div class="ux-metric-label">Campaign turnaround time</div></div>
+      </div>
+
+      <div class="ux-body">
+        <div class="ux-section-label">Problem → Action → Result</div>
+        <div class="par-row">
+          <div class="par-block par-problem">
+            <div class="par-label">Problem</div>
+            <div class="par-text">Multiple marketing campaigns needed consistent, high-quality UI designs aligned with client specs — tight timelines and varying design requirements per campaign.</div>
+          </div>
+          <div class="par-block par-action">
+            <div class="par-label">Action</div>
+            <div class="par-text">Managed end-to-end UI design and layout development. Designed and implemented advertising templates using HTML5, CSS3, JavaScript, and Photoshop for multiple campaigns.</div>
+          </div>
+          <div class="par-block par-result">
+            <div class="par-label">Result</div>
+            <div class="par-text">Delivered consistent, high-quality campaign interfaces on tight schedules. Reduced turnaround time, improved visual quality, and strengthened brand alignment across campaigns.</div>
+          </div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">UX Process</div>
+        <div class="process-row">
+          <div class="proc-step">Client Brief</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Layout Design</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Template Build</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Cross-team Review</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Campaign Launch</div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">Before &amp; After</div>
+        <div class="ba-row">
+          <div class="ba-block ba-before">
+            <div class="ba-label">Before</div>
+            <div class="ba-item">Inconsistent visual design across campaigns</div>
+            <div class="ba-item">Slow design approval &amp; build cycles</div>
+            <div class="ba-item">Fragmented client communication</div>
+          </div>
+          <div class="ba-block ba-after">
+            <div class="ba-label">After</div>
+            <div class="ba-item">Unified, brand-aligned campaign UI</div>
+            <div class="ba-item">Faster design-to-launch pipeline</div>
+            <div class="ba-item">Clear client alignment at every stage</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 8 — DiaNoche Designs -->
+    <div class="ux-card reveal reveal-delay-2">
+      <div class="ux-header">
+        <div class="ux-header-left">
+          <div class="ux-num">08 — E-Commerce Design</div>
+          <div class="ux-title">DiaNoche Designs</div>
+          <div class="ux-client">Art &amp; design e-commerce &middot; Team of 12 &middot; UI Designer</div>
+          <div class="ux-tags">
+            <span class="tag">Magento</span><span class="tag">MySQL</span><span class="tag">Bootstrap</span><span class="tag">HTML5</span><span class="tag">CSS3</span><span class="tag">JavaScript</span><span class="tag">Photoshop</span>
+          </div>
+        </div>
+        <a href="https://www.dianochedesigns.com" target="_blank" rel="noopener" class="ux-visit">Visit Site ↗</a>
+      </div>
+
+      <div class="ux-metrics">
+        <div class="ux-metric"><div class="ux-metric-num">Pixel</div><div class="ux-metric-label">Perfect design-to-dev translation</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Rich</div><div class="ux-metric-label">Visually engaging product UI</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Smooth</div><div class="ux-metric-label">Design–backend team handoff</div></div>
+      </div>
+
+      <div class="ux-body">
+        <div class="ux-section-label">Problem → Action → Result</div>
+        <div class="par-row">
+          <div class="par-block par-problem">
+            <div class="par-label">Problem</div>
+            <div class="par-text">Needed a visually rich, consistent e-commerce UI with seamless coordination between design and backend for dynamic Magento features.</div>
+          </div>
+          <div class="par-block par-action">
+            <div class="par-label">Action</div>
+            <div class="par-text">Collaborated with backend developers to design and implement user-friendly interfaces. Translated Photoshop designs into responsive Bootstrap layouts, ensuring design-functionality alignment.</div>
+          </div>
+          <div class="par-block par-result">
+            <div class="par-label">Result</div>
+            <div class="par-text">Delivered a visually consistent, user-friendly e-commerce experience. Improved team collaboration and streamlined design-to-development workflows for efficient delivery.</div>
+          </div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">UX Process</div>
+        <div class="process-row">
+          <div class="proc-step">Visual Design</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">PSD-to-HTML</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Magento Theme</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Backend Sync</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">QA &amp; Launch</div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">Before &amp; After</div>
+        <div class="ba-row">
+          <div class="ba-block ba-before">
+            <div class="ba-label">Before</div>
+            <div class="ba-item">Design-dev misalignment on Magento features</div>
+            <div class="ba-item">Inconsistent visual presentation</div>
+            <div class="ba-item">Slow feedback loop between teams</div>
+          </div>
+          <div class="ba-block ba-after">
+            <div class="ba-label">After</div>
+            <div class="ba-item">Cohesive, brand-true e-commerce UI</div>
+            <div class="ba-item">Pixel-perfect responsive layouts</div>
+            <div class="ba-item">Efficient cross-team collaboration</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 9 — BioGenex US -->
+    <div class="ux-card reveal reveal-delay-3">
+      <div class="ux-header">
+        <div class="ux-header-left">
+          <div class="ux-num">09 — Healthcare Client Portal</div>
+          <div class="ux-title">BioGenex US</div>
+          <div class="ux-client">Diagnostics &amp; research platform &middot; Team of 3 &middot; Web Designer</div>
+          <div class="ux-tags">
+            <span class="tag">.NET</span><span class="tag">MySQL</span><span class="tag">HTML5</span><span class="tag">CSS3</span><span class="tag">JavaScript</span><span class="tag">jQuery</span><span class="tag">Photoshop CS6</span>
+          </div>
+        </div>
+        <a href="http://www.biogenex.com" target="_blank" rel="noopener" class="ux-visit">Visit Site ↗</a>
+      </div>
+
+      <div class="ux-metrics">
+        <div class="ux-metric"><div class="ux-metric-num">Solo</div><div class="ux-metric-label">End-to-end frontend ownership</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Zero</div><div class="ux-metric-label">Backend disruption during UI updates</div></div>
+        <div class="ux-metric"><div class="ux-metric-num">Better</div><div class="ux-metric-label">Usability &amp; interface consistency</div></div>
+      </div>
+
+      <div class="ux-body">
+        <div class="ux-section-label">Problem → Action → Result</div>
+        <div class="par-row">
+          <div class="par-block par-problem">
+            <div class="par-label">Problem</div>
+            <div class="par-text">Existing client portal needed UI improvements and updated design standards while maintaining full compatibility with the existing .NET backend system.</div>
+          </div>
+          <div class="par-block par-action">
+            <div class="par-label">Action</div>
+            <div class="par-text">Independently managed frontend enhancements — developed HTML5/CSS3 prototypes from client templates, improved layout structure, visual consistency, and usability.</div>
+          </div>
+          <div class="par-block par-result">
+            <div class="par-label">Result</div>
+            <div class="par-text">Delivered improved UI enhancing user experience and interface consistency. Successfully handled end-to-end frontend independently, ensuring long-term portal stability.</div>
+          </div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">UX Process</div>
+        <div class="process-row">
+          <div class="proc-step">Portal Audit</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Template Design</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">HTML/CSS Build</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">Backend Integration</div>
+          <div class="proc-arrow">→</div>
+          <div class="proc-step">UAT &amp; Handoff</div>
+        </div>
+
+        <div class="ux-section-label" style="margin-top:1.5rem;">Before &amp; After</div>
+        <div class="ba-row">
+          <div class="ba-block ba-before">
+            <div class="ba-label">Before</div>
+            <div class="ba-item">Outdated, inconsistent portal UI</div>
+            <div class="ba-item">Poor layout structure &amp; hierarchy</div>
+            <div class="ba-item">Usability issues for portal users</div>
+          </div>
+          <div class="ba-block ba-after">
+            <div class="ba-label">After</div>
+            <div class="ba-item">Refreshed, consistent interface design</div>
+            <div class="ba-item">Clear visual hierarchy &amp; layout</div>
+            <div class="ba-item">Improved usability within existing system</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label reveal">Let's talk</div>
+  <h2 class="section-title reveal">Open to <em>new</em><br>opportunities.</h2>
+  <p class="contact-sub reveal">
+    Whether you're building a product, need a design partner,<br>
+    or want to chat about UI/UX — I'd love to hear from you.
+  </p>
+  <div class="contact-links reveal">
+    <a href="mailto:srinivas95kota@hotmail.com" class="contact-link">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 4 10 9 10-9"/></svg>
+      srinivas95kota@hotmail.com
+    </a>
+    <a href="tel:+917075251216" class="contact-link">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013 4.18 2 2 0 014.18 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      +91 70752 51216
+    </a>
+
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Srinivas Kota. Designed & Built with care.</p>
+  <p>Hyderabad, India 🇮🇳</p>
+</footer>
+
+<script>
+  /* Custom cursor */
+  const dot = document.getElementById('dot');
+  const ring = document.getElementById('ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  (function animCursor(){
+    rx += (mx-rx)*.12; ry += (my-ry)*.12;
+    dot.style.left  = mx+'px'; dot.style.top  = my+'px';
+    ring.style.left = rx+'px'; ring.style.top = ry+'px';
+    requestAnimationFrame(animCursor);
+  })();
+
+  /* Nav scroll */
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  /* Burger */
+  const burger = document.getElementById('burger');
+  const navLinks = document.getElementById('navLinks');
+  burger.addEventListener('click', () => {
+    burger.classList.toggle('active');
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      burger.classList.remove('active');
+      navLinks.classList.remove('open');
+    });
+  });
+
+  /* Scroll reveal */
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
